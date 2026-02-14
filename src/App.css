@@ -1,42 +1,126 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/*
+ * 스마트폰 비율
+ */
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* dvh: 주소 표시줄 유무에 따라 현재 보여지는 뷰포트의 높이를 동적으로 가져옴 */
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  background-color: #ffeff3;
+  font-family: Pretendard, sans-serif;
+  overflow: hidden; /* 스크롤 방지 */
+}
+
+.container {
   text-align: center;
+  width: 100%;
+  max-width: 412px;
+  aspect-ratio: 9 / 19.3;
+  /* safe area inset : 안정적으로 콘텐츠가 보일 수 있는 안전영역 */
+  padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+  /* 내용이 세로 중앙에 오도록 정렬 유지 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.title {
+  color: #d6336c;
+  font-size: 2rem;
+  margin-bottom: 5px;
 }
 
-@keyframes logo-spin {
-  from {
+.subtitle {
+  color: #868e96;
+  margin-bottom: 40px;
+}
+
+.card-area {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 초콜릿 버튼 */
+.chocolate-btn {
+  font-size: 8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent; /* 터치 시 파란 박스 제거 */
+  transition: transform 0.1s;
+}
+
+.chocolate-btn:active {
+  transform: scale(0.9); /* 눌렀을 때 살짝 작아지는 시각적 피드백 */
+}
+
+/* 초콜릿 흔들림 동작 애니메이션 (시간흐름 0~100) */
+@keyframes shake {
+  0% {
     transform: rotate(0deg);
   }
+  25% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* 메시지 카드 */
+.message-card {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(214, 51, 108, 0.2);
+  width: 90%;
+  cursor: pointer;
+  border: 2px solid #ffdeeb;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.message-text {
+  font-size: 1.3rem;
+  color: #495057;
+  font-weight: bold;
+  line-height: 1.5;
+  word-break: keep-all; /* 단어 단위로 줄바꿈 (가독성 향상) */
+}
+
+.helper-text {
+  font-size: 0.8rem;
+  color: #adb5bd;
+  margin-top: 20px;
+}
+
+/* 부드럽게 나타나는 애니메이션 */
+.fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
