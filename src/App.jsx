@@ -1,58 +1,78 @@
-import { messages } from "./data/messages";
 import "./App.css";
+import { messages } from "./data/messages";
 import { useState } from "react";
+import { useConfetti } from "./hooks/useConfetti";
 
 function App() {
-  const [currentMessage, setCurrentMessage] = useState(null);
-  const [isShake, setIsShake] = useState(false);
+  // enum [closing: 닫히는 중 -> closed: 봉투 닫힘 -> opening: 열리는 중 -> opened: 봉투 열림]
+  const [envelopState, setEnvelopState] = useState("closed");
+  const [currentMessage, setCurrentMessage] = useState("");
 
-  // 초콜릿 클릭 시 실행될 이벤트 핸들러
-  const handleOpenChocolate = () => {
-    // 1. 이미 메시지가 열려있으면 초기화 (토글)
-    if (currentMessage) {
-      setCurrentMessage(null);
-      return;
-    }
+  const { fireConfetti } = useConfetti();
 
-    // 2. 초콜릿 흔들기 애니메이션 ON
-    setIsShake(true);
+  // 봉투 열기
+  const handleOpenEnvelope = () => {
+    // 봉투가 닫혀있을 때만 작동
+    if (envelopState !== "closed") return;
 
-    // 0.5초 뒤에 흔들기 상태를 다시 OFF로 변경
-    setTimeout(() => setIsShake(false), 500);
+    // 1. 열리는 중 상태로 변경
+    setEnvelopState("opening");
 
-    // 3. 메시지 배열에서 랜덤 인덱스 추출
+    // 랜덤 메시지 준비
     const randomIndex = Math.floor(Math.random() * messages.length);
+    setCurrentMessage(messages[randomIndex]);
 
-    // 4. 애니메이션이 끝날 즈음에 메시지 상태 업데이트
+    // 2. 0.6초 뒤, 덮개가 완전히 열린 후 카드 표시
     setTimeout(() => {
-      setCurrentMessage(messages[randomIndex]);
-    }, 500);
+      setEnvelopState("opened");
+      /* 텍스트가 나타나는 타이밍에 맞춰 폭죽 효과 */
+      setTimeout(() => {
+        fireConfetti();
+      }, 600);
+    }, 600);
+  };
+
+  // 봉투 닫기 (초기화)
+  const handleReset = () => {
+    // 메시지 카드 터치 시 카드를 먼저 넣음
+    if (envelopState === "opened") {
+      setEnvelopState("closing");
+
+      // 카드가 완전히 들어간 후 덮개 닫기
+      setTimeout(() => {
+        setEnvelopState("closed");
+        setCurrentMessage("");
+      }, 800);
+    }
   };
 
   return (
     <div className="container">
       <h1 className="title">Happy Valentine's Day 💝</h1>
-      <p className="subtitle">초콜릿을 눌러봐!</p>
+      <p className="subtitle">편지 봉투를 터치해 열어보세요!</p>
 
       {/* 카드 렌더링 영역 */}
       <div className="card-area">
-        {/* 조건부 렌더링: 메시지가 없으면 버튼, 있으면 카드를 보여줌 */}
-        {!currentMessage ? (
-          <button
-            className={`chocolate-btn ${isShake ? "shake" : ""}`}
-            onClick={handleOpenChocolate}
-          >
-            🍫
-          </button>
-        ) : (
-          <div
-            className="message-card fade-in"
-            onClick={() => setCurrentMessage(null)}
-          >
+        {/* 봉투 상태에 따라 클래스명이 동적으로 바뀜 */}
+        <div
+          className={`envelope-wrapper ${envelopState}`}
+          onClick={envelopState === "closed" ? handleOpenEnvelope : handleReset}
+        >
+          {/* 1. 봉투 뒷면 */}
+          <div className="envelope-back"></div>
+
+          {/* 2. 편지 카드 */}
+          <div className="letter-card">
             <p className="message-text">{currentMessage}</p>
-            <p className="helper-text">(한 번 더 누르면 닫혀요)</p>
+            <p className="helper-text">(터치하면 다시 닫혀요)</p>
           </div>
-        )}
+
+          {/* 3. 봉투 앞면 */}
+          <div className="envelope-front"></div>
+
+          {/* 봉투 덮개 */}
+          <div className="envelope-flap"></div>
+        </div>
       </div>
     </div>
   );

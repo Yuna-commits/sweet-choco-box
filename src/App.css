@@ -1,6 +1,7 @@
-/*
- * 스마트폰 비율
- */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -8,98 +9,229 @@ body {
   align-items: center;
   /* dvh: 주소 표시줄 유무에 따라 현재 보여지는 뷰포트의 높이를 동적으로 가져옴 */
   min-height: 100dvh;
-  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
   background-color: #ffeff3;
-  font-family: Pretendard, sans-serif;
+  font-family: "Gowun Dodum", sans-serif;
   overflow: hidden; /* 스크롤 방지 */
 }
 
 .container {
-  text-align: center;
-  width: 100%;
-  max-width: 412px;
-  aspect-ratio: 9 / 19.3;
+  width: 90%;
+  max-width: 420px;
+  min-height: 70dvh;
+  max-height: 90dvh;
+  background-color: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #ffe3ec;
+  box-shadow: 0 20px 40px rgba(214, 51, 108, 0.15);
   /* safe area inset : 안정적으로 콘텐츠가 보일 수 있는 안전영역 */
-  padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+  padding: calc(env(safe-area-inset-top) + 40px) 20px
+    calc(env(safe-area-inset-bottom) + 40px) 20px;
   /* 내용이 세로 중앙에 오도록 정렬 유지 */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .title {
   color: #d6336c;
-  font-size: 2rem;
-  margin-bottom: 5px;
+  font-size: 2.2rem;
+  margin: 0 0 10px 0;
 }
 
 .subtitle {
   color: #868e96;
-  margin-bottom: 40px;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
 }
 
 .card-area {
-  height: 300px;
+  flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  perspective: 1000px; /* 원근감 적용 */
 }
 
-/* 초콜릿 버튼 */
-.chocolate-btn {
-  font-size: 8rem;
-  background: none;
-  border: none;
+/* 편지 봉투 UI */
+.envelope-wrapper {
+  /* relative: 편지 봉투에 속한 요소(뒷면, 앞면, 덮개, 편지 카드)는 봉투를 기준으로 위치를 잡음 */
+  position: relative;
+  width: 300px;
+  height: 200px;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent; /* 터치 시 파란 박스 제거 */
-  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.3s;
 }
 
-.chocolate-btn:active {
-  transform: scale(0.9); /* 눌렀을 때 살짝 작아지는 시각적 피드백 */
+.envelope-wrapper:active {
+  transform: scale(0.95); /* 터치 시 눌리는 효과 */
 }
 
-/* 초콜릿 흔들림 동작 애니메이션 (시간흐름 0~100) */
-@keyframes shake {
+/* 터치 이펙트 */
+.envelope-wrapper::before,
+.envelope-wrapper::after {
+  position: absolute;
+  /* 봉투의 살짝 위쪽 중앙에서 출발하도록 위치 지정 */
+  top: 30%;
+  left: 50%;
+  font-size: 2.5rem;
+  opacity: 0;
+  z-index: 10; /* 봉투보다 훨씬 앞으로 나오게 */
+  pointer-events: none; /* 터치 방해 금지 */
+}
+
+.envelope-wrapper::before {
+  content: "💖";
+}
+
+.envelope-wrapper::after {
+  content: "✨";
+}
+
+.envelope-wrapper.opening::before {
+  animation: fly-left 0.8s ease-out forwards;
+}
+
+.envelope-wrapper.opening::after {
+  animation: fly-right 0.8s ease-out forwards;
+}
+
+/* 왼쪽으로 날아가는 궤적 */
+@keyframes fly-left {
   0% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(10deg);
-  }
-  50% {
-    transform: rotate(0deg);
-  }
-  75% {
-    transform: rotate(-10deg);
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    opacity: 1;
   }
   100% {
-    transform: rotate(0deg);
+    /* 위, 왼쪽으로 멀어지면서 커지고 살짝 회전함 */
+    transform: translate(-250%, -200%) scale(1.5) rotate(-30deg);
+    opacity: 0;
   }
 }
 
-.shake {
-  animation: shake 0.4s ease-in-out;
+/* 오른쪽으로 날아가는 궤적 */
+@keyframes fly-right {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    /* 위, 오른쪽으로 멀어지면서 커지고 살짝 회전함 */
+    transform: translate(150%, -250%) scale(1.5) rotate(30deg);
+    opacity: 0;
+  }
 }
 
-/* 메시지 카드 */
-.message-card {
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(214, 51, 108, 0.2);
+/* 봉투 뒷면 */
+.envelope-back {
+  /* 
+  부모 relative - 자식 absolute
+  편지 봉투를 기준으로 위치 잡음 
+  */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ff8fa3;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 15px 25px rgba(214, 51, 108, 0.2);
+  z-index: 1; /* 사용자 눈에 더 가깝게 오는 순서 */
+}
+
+/* 편지 카드 */
+.letter-card {
+  position: absolute;
+  bottom: 10px;
+  left: 5%;
   width: 90%;
-  cursor: pointer;
+  height: 90%;
+  background: #fff;
   border: 2px solid #ffdeeb;
-  -webkit-tap-highlight-color: transparent;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 2; /* 봉투 뒷면(1)보다 앞, 봉투 덮개(3)보다 뒤 */
+  box-shadow: 0 5px 15px rgba(214, 51, 108, 0.1);
+  transition: /* 부드러운 장면 전환 애니메이션 */
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.8s;
+}
+
+/* 봉투 앞면 */
+.envelope-front {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-left: 150px solid #ff9db0;
+  border-right: 150px solid #ff9db0;
+  border-bottom: 110px solid #ffb3c1;
+  border-top: 90px solid transparent;
+  z-index: 3;
+  border-radius: 0 0 10px 10px;
+}
+
+/* 봉투 덮개 */
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-left: 150px solid transparent;
+  border-right: 150px solid transparent;
+  border-top: 110px solid #ff758f;
+  transform-origin: top; /* 회전 축을 윗변으로 설정 */
+  transition:
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    z-index 0.2s;
+  z-index: 4;
+}
+
+/* --- 애니메이션 설정 --- */
+
+/* 1. 봉투 덮개 열기 */
+.envelope-wrapper.opening .envelope-flap,
+.envelope-wrapper.opened .envelope-flap,
+.envelope-wrapper.closing .envelope-flap {
+  transform: rotateX(180deg); /* X축 기준으로 180도 뒤집음 */
+  z-index: 1; /* 열린 후엔 카드 뒤로 보냄 */
+}
+
+/* 2. 카드 솟아오름 */
+.envelope-wrapper.opening .letter-card {
+  transform: translateY(-40px);
+  z-index: 2; /* 앞면 위로 뚫고 나옴 */
+}
+
+/* 3. 카드 완전히 나옴*/
+.envelope-wrapper.opened .letter-card {
+  transform: translateY(-160px) scale(1.05); /* 더 높이, 더 크게 */
+  z-index: 5;
+  height: 250px;
+}
+
+/* 카드 먼저 집어넣기 */
+.envelope-wrapper.closing .letter-card {
+  transform: translateY(0) scale(1);
+  z-index: 2;
+  height: 90%;
+}
+
+/* 카드가 다 올라온 뒤에 텍스트 표시 */
+.message-text,
+.helper-text {
+  opacity: 0;
+  transition: opacity 0.2s; /* 0.8초 지연 후 0.5초 동안 나타남 */
 }
 
 .message-text {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: #495057;
-  font-weight: bold;
-  line-height: 1.5;
+  line-height: 1.6;
   word-break: keep-all; /* 단어 단위로 줄바꿈 (가독성 향상) */
 }
 
@@ -109,18 +241,8 @@ body {
   margin-top: 20px;
 }
 
-/* 부드럽게 나타나는 애니메이션 */
-.fade-in {
-  animation: fade-in 0.5s ease-out;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.envelope-wrapper.opened .message-text,
+.envelope-wrapper.opened .helper-text {
+  opacity: 1;
+  transition: opacity 0.5s 0.6s; /* 열릴 땐 카드가 솟아오른 후 스르륵 나타남 */
 }
