@@ -1,10 +1,13 @@
 import { messages } from "./data/messages";
 import "./App.css";
 import { useState } from "react";
+import { useConfetti } from "./hooks/useConfetti";
 
 function App() {
   const [currentMessage, setCurrentMessage] = useState(null);
   const [isShake, setIsShake] = useState(false);
+
+  const { fireConfetti } = useConfetti();
 
   // 초콜릿 클릭 시 실행될 이벤트 핸들러
   const handleOpenChocolate = () => {
@@ -26,6 +29,7 @@ function App() {
     // 4. 애니메이션이 끝날 즈음에 메시지 상태 업데이트
     setTimeout(() => {
       setCurrentMessage(messages[randomIndex]);
+      fireConfetti();
     }, 500);
   };
 
