@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useConfetti } from "./hooks/useConfetti";
 
 function App() {
-  // enum [closed: 봉투 닫힘 -> opening: 열리는 중 -> opened: 봉투 열림]
+  // enum [closing: 닫히는 중 -> closed: 봉투 닫힘 -> opening: 열리는 중 -> opened: 봉투 열림]
   const [envelopState, setEnvelopState] = useState("closed");
   const [currentMessage, setCurrentMessage] = useState("");
 
@@ -22,20 +22,27 @@ function App() {
     const randomIndex = Math.floor(Math.random() * messages.length);
     setCurrentMessage(messages[randomIndex]);
 
-    // 2. 1초 뒤에 봉투 열림 상태로 전환
+    // 2. 0.6초 뒤, 덮개가 완전히 열린 후 카드 표시
     setTimeout(() => {
       setEnvelopState("opened");
-      fireConfetti();
-    }, 1000);
+      /* 텍스트가 나타나는 타이밍에 맞춰 폭죽 효과 */
+      setTimeout(() => {
+        fireConfetti();
+      }, 600);
+    }, 600);
   };
 
   // 봉투 닫기 (초기화)
   const handleReset = () => {
-    // 메시지 카드 터치 시 초기 상태로 덮음
+    // 메시지 카드 터치 시 카드를 먼저 넣음
     if (envelopState === "opened") {
-      setEnvelopState("closed");
-      // 텍스트 제거
-      setTimeout(() => setCurrentMessage(""), 500);
+      setEnvelopState("closing");
+
+      // 카드가 완전히 들어간 후 덮개 닫기
+      setTimeout(() => {
+        setEnvelopState("closed");
+        setCurrentMessage("");
+      }, 800);
     }
   };
 
